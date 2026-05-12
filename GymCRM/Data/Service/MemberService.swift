@@ -53,4 +53,9 @@ class MemberService {
         members.removeAll()
         userDefaults.removeObject(forKey: "gym")
     }
+
+    var pendings: Int {
+        members.filter { $0.paymentStatus == false && Date() > $0.expirationDate }
+            .count
+    }
 }

@@ -9,43 +9,35 @@ import SwiftUI
 
 struct SettingsScreen: View {
     @Environment(MemberService.self) var memberService
-    @Environment(\.dismiss) var dismiss
     @State private var show = false
 
-
-
     var body: some View {
-        Button(action: {
-            show = true
-        }) {
-            VStack(alignment: .leading) {
-                HStack{
-                    Text("Delete all chats")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Image(systemName: "trash")
-                        .foregroundStyle(Color.white)
+        NavigationStack {
+            List {
+                Section(header: Text("AJUSTES")) {
+
+                    Button(role: .destructive) {
+                        show = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "trash.fill")
+                            Text("Eliminar todos los miembros")
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                        .padding(.vertical, 8)
+                    }
                 }
             }
-            .font(.headline)
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.red)
-            .cornerRadius(15)
-
-        }
-        .buttonStyle(PlainButtonStyle())
-        .alert("Delete all chats", isPresented: $show) {
-            Button("Delete all") {
-                memberService.deleteMembers()
+            .navigationTitle("Ajustes")
+            .alert("¿Borrar todos los miembros?", isPresented: $show) {
+                Button("Eliminar todo", role: .destructive) {
+                    memberService.deleteMembers()
+                }
+                Button("Cancelar", role: .cancel) { }
+            } message: {
+                Text("Esta acción eliminará permanentemente a todos. No se puede deshacer.")
             }
-            Button("Cancel", role: .cancel) { }
-        } message: {
-            Text("This will permanently delete all your chats. This action cannot be undone.")
         }
-        Spacer()
     }
-
-
 }

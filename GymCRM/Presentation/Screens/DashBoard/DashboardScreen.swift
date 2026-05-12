@@ -42,6 +42,19 @@ struct DashboardScreen: View {
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(20)
 
+                VStack(alignment: .leading, spacing: 10) {
+                        Text("Pagos pendientes")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+
+                    Text("\(memberService.pendings)")
+                            .font(.system(size: 64, weight: .bold))
+                            .foregroundColor(.primary)
+                    }
+                    .padding(30)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(20)
+
 
                     Spacer()
                 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GymMember: Identifiable, Codable {
+struct GymMember: Identifiable, Codable , Equatable{
     var id = UUID()
     var fullName: String
     var email: String

@@ -75,5 +75,8 @@ struct MemberScreen: View {
             print("Member Screen")
             viewModel.update(members: memberService.members)
         }
+        .onChange(of: memberService.members) {
+            viewModel.update(members: memberService.members)
+        }
     }
 }
