@@ -13,19 +13,17 @@ struct GymMember: Identifiable, Codable , Equatable{
     var email: String
     var phone: String
     var membershipType: MembershipType
-    var paymentStatus: Bool
+    var isPaid: Bool
     var isActive: Bool
     var createdAt: Date
+    var expirationDate: Date 
 
-    var expirationDate: Date {
-            let calendar = Calendar.current
-            switch membershipType {
-            case .monthly:
-                return calendar.date(byAdding: .month, value: 1, to: createdAt) ?? createdAt
-            case .annually:
-                return calendar.date(byAdding: .year, value: 1, to: createdAt) ?? createdAt
-            }
+    var paymentStatus: Bool {
+        if Date() > expirationDate {
+            return false
         }
+        return isPaid
+    }
 }
 
 enum MembershipType: String, Codable {

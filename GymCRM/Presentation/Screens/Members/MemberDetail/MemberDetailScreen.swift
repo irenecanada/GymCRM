@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MemberDetailScreen: View {
-    let member: GymMember
+    @State var member: GymMember
     @Environment(MemberService.self) var memberService
     @Environment(\.dismiss) var dismiss
 
@@ -16,20 +16,22 @@ struct MemberDetailScreen: View {
         List {
             Section("Información Personal") {
                 HStack {
-                    Text("Nombre: ")
-                        .bold()
-                    Text(member.fullName)
+                    Text("Nombre: ").bold()
+                    TextField("Nombre", text: $member.fullName)
                 }
                 HStack {
-                    Text("Email: ")
-                        .bold()
-                    Text(member.email)
+                    Text("Email: ").bold()
+                    TextField("Email", text: $member.email)
                 }
                 HStack {
-                    Text("Telefono: ")
-                        .bold()
-                    Text(member.phone)
+                    Text("Telefono: ").bold()
+                    TextField("Telefono", text: $member.phone)
                 }
+            }
+            Section("Fechas de Membresía") {
+                DatePicker("Fecha Inicio", selection: $member.createdAt, displayedComponents: .date)
+
+                DatePicker("Fecha Expiración", selection: $member.expirationDate, displayedComponents: .date)
             }
 
             Section("Suscripcion") {
@@ -52,14 +54,29 @@ struct MemberDetailScreen: View {
 
             Section("Tipo") {
                 HStack {
-                    Text("Activo: ")
-                        .bold()
-                    Text(member.isActive ? "Sí" : "No")
+                    Text("Activo: ").bold()
+                    Toggle("", isOn: $member.isActive).labelsHidden()
                 }
                 HStack {
-                    Text("Pago: ")
-                        .bold()
+                    Text("Pago: ").bold()
                     Text(member.paymentStatus ? "Sí" : "No")
+                        .foregroundColor(member.paymentStatus ? .green : .red)
+                }
+
+                if !member.paymentStatus {
+                    Button("Renovar 1 Mes") {
+                        member.expirationDate = Calendar.current.date(byAdding: .month, value: 1, to: Date()) ?? Date()
+                        member.isPaid = true
+                        memberService.updateMember(member)
+                    }
+                    .foregroundColor(.blue)
+
+                    Button("Renovar 1 Año") {
+                        member.expirationDate = Calendar.current.date(byAdding: .year, value: 1, to: Date()) ?? Date()
+                        member.isPaid = true
+                        memberService.updateMember(member)
+                    }
+                    .foregroundColor(.orange)
                 }
             }
 
@@ -75,18 +92,13 @@ struct MemberDetailScreen: View {
                     }
                 }
             }
-            Section {
-                Button(role: .cancel) {
-                    dismiss()
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("Cancelar")
-                        Spacer()
-                    }
-                }
-            }
         }
         .navigationTitle(member.fullName)
+        .toolbar {
+            Button("Guardar") {
+                memberService.updateMember(member)
+                dismiss()
+            }
+        }
     }
 }

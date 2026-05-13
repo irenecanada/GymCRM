@@ -74,7 +74,7 @@ struct AddMemberView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Guardar") {
-                        service.addMember(name: name, email: email, phone: phone, type: type, isActive: isActive, createdAt: registrationDate, paymentStatus: isPaid)
+                        service.addMember(name: name, email: email, phone: phone, type: type, isActive: isActive, createdAt: registrationDate, isPaid: isPaid)
                         dismiss()
                     }
                 }

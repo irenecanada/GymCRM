@@ -17,18 +17,46 @@ class MemberService {
         restoreMembers()
     }
 
-    func addMember(name: String, email: String, phone: String, type: MembershipType, isActive: Bool, createdAt: Date, paymentStatus: Bool) {
+    func addMember(name: String, email: String, phone: String, type: MembershipType, isActive: Bool, createdAt: Date, isPaid: Bool) {
+
+        let calendar = Calendar.current
+        let calculatedExpiration: Date
+
+        if type == .monthly {
+            calculatedExpiration = calendar.date(byAdding: .month, value: 1, to: createdAt) ?? createdAt
+        } else {
+            calculatedExpiration = calendar.date(byAdding: .year, value: 1, to: createdAt) ?? createdAt
+        }
+
         let newMember = GymMember(
             fullName: name,
             email: email,
             phone: phone,
             membershipType: type,
-            paymentStatus: paymentStatus,
+            isPaid: isPaid,
             isActive: isActive,
             createdAt: createdAt,
+            expirationDate: calculatedExpiration 
         )
         members.append(newMember)
         saveMembers()
+    }
+
+    func updateMember(_ updatedMember: GymMember) {
+        if let index = members.firstIndex(where: { $0.id == updatedMember.id }) {
+            members[index] = updatedMember
+            saveMembers()
+        }
+    }
+
+    func deleteMember(member: GymMember) {
+        members.removeAll(where: { $0.id == member.id })
+        saveMembers()
+    }
+
+    func deleteMembers() {
+        members.removeAll()
+        userDefaults.removeObject(forKey: "gym")
     }
 
     private func saveMembers() {
@@ -44,18 +72,9 @@ class MemberService {
         }
     }
 
-    func deleteMember(member: GymMember) {
-        members.removeAll(where: { $0.id == member.id })
-        saveMembers()
-    }
-
-    func deleteMembers() {
-        members.removeAll()
-        userDefaults.removeObject(forKey: "gym")
-    }
-
     var pendings: Int {
-        members.filter { $0.paymentStatus == false && Date() > $0.expirationDate }
-            .count
+        members.filter { !$0.paymentStatus }.count
     }
+
+
 }
