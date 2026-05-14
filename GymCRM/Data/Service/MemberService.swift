@@ -82,10 +82,11 @@ class MemberService {
     
 
     var expiration: Int {
-        let limitDate = Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date()
+        let limitDate = Calendar.current.date(byAdding: .day, value: 5, to: Date()) ?? Date()
 
-        return members.count { $0.expirationDate >= limitDate && $0.expirationDate <= Date() }
+        return members.count { $0.expirationDate >= Date() && $0.expirationDate <= limitDate }
     }
+
 
 
 }
