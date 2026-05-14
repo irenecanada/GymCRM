@@ -11,6 +11,7 @@ struct MemberScreen: View {
     @Environment(MemberService.self) var memberService
     @State private var show = false
     @State private var viewModel = MemberViewModel()
+    @State private var selectedFilter = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -32,18 +33,31 @@ struct MemberScreen: View {
                         .foregroundColor(.white)
                 }
 
-            }.searchable(text: $viewModel.searchText, prompt: "Buscar miembros ...")
+            }
+            .searchable(text: $viewModel.searchText, prompt: "Buscar miembros ...")
 
             .padding()
 
+            Picker("Filtro", selection: $selectedFilter) {
+                Text("Todos").tag(0)
+                Text("Activos").tag(1)
+                Text("Inactivos").tag(2)
+                Text("Pagados").tag(3)
+                Text("No pagados").tag(4)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            .onChange(of: selectedFilter) {
+                changeButton()
+            }
 
             Table(viewModel.filteredMembers) {
                 TableColumn("Nombre") { member in
-                        NavigationLink(destination: MemberDetailScreen(member: member)) {
-                            Text(member.fullName)
-                                .foregroundColor(.blue)
-                        }
+                    NavigationLink(destination: MemberDetailScreen(member: member)) {
+                        Text(member.fullName)
+                            .foregroundColor(.blue)
                     }
+                }
 
                 TableColumn("Email", value: \.email)
 
@@ -77,6 +91,28 @@ struct MemberScreen: View {
         }
         .onChange(of: memberService.members) {
             viewModel.update(members: memberService.members)
+        }
+
+    }
+
+    func changeButton() {
+        var list = memberService.members
+
+        if selectedFilter == 1 {
+            list = list.filter { $0.isActive }
+        } else if selectedFilter == 2 {
+            list = list.filter { !$0.isActive }
+        }
+        else if selectedFilter == 3 {
+            list = list.filter { $0.paymentStatus }
+        } else if selectedFilter == 4 {
+            list = list.filter { !$0.paymentStatus }
+        }
+
+        viewModel.update(members: list)
+
+        if !viewModel.searchText.isEmpty {
+            viewModel.search()
         }
     }
 }

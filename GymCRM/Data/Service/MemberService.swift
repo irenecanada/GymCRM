@@ -11,7 +11,9 @@ import Observation
 @Observable
 class MemberService {
     var members: [GymMember] = []
+    var member: GymMember?
     private let userDefaults = UserDefaults.standard
+    var dashboardTitle: String = "GYM CRM"
 
     init() {
         restoreMembers()
@@ -74,6 +76,15 @@ class MemberService {
 
     var pendings: Int {
         members.filter { !$0.paymentStatus }.count
+    }
+
+
+    
+
+    var expiration: Int {
+        let limitDate = Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date()
+
+        return members.count { $0.expirationDate >= limitDate && $0.expirationDate <= Date() }
     }
 
 

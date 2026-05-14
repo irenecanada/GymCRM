@@ -12,6 +12,7 @@ struct SettingsScreen: View {
     @State private var show = false
 
     var body: some View {
+        @Bindable var service = memberService
         NavigationStack {
             List {
                 Section(header: Text("AJUSTES")) {
@@ -28,6 +29,13 @@ struct SettingsScreen: View {
                         .padding(.vertical, 8)
                     }
                 }
+
+                Section(header: Text("EDICIÓN")) {
+                    Text("Nombre de la App")
+                        .fontWeight(.bold)
+                    TextField("Editar título del Dashboard", text: $service.dashboardTitle)
+                        .textFieldStyle(.roundedBorder)
+                }
             }
             .navigationTitle("Ajustes")
             .alert("¿Borrar todos los miembros?", isPresented: $show) {
@@ -38,6 +46,8 @@ struct SettingsScreen: View {
             } message: {
                 Text("Esta acción eliminará permanentemente a todos. No se puede deshacer.")
             }
+
+
         }
     }
 }

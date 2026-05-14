@@ -13,9 +13,10 @@ struct DashboardScreen: View {
     var body: some View {
 
             VStack(alignment: .leading, spacing: 20) {
-
+                Text("Dashboard")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
                 HStack {
-
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Miembros Totales")
                         .font(.headline)
@@ -56,11 +57,24 @@ struct DashboardScreen: View {
                     .cornerRadius(20)
 
 
+                    VStack(alignment: .leading, spacing: 10) {
+                            Text("Expiracion cerca")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+
+                        Text("\(memberService.expiration)")
+                                .font(.system(size: 64, weight: .bold))
+                                .foregroundColor(.primary)
+                        }
+                        .padding(30)
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(20)
+
                     Spacer()
                 }
             }
             .padding()
-        .navigationTitle("Dashboard")
+        .navigationTitle(memberService.dashboardTitle)
         Spacer()
     }
 }
